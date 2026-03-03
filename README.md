@@ -1,151 +1,322 @@
-# 💧 Construction Water Consumption Anomaly Analysis
-
-A data-driven case study demonstrating how phase-aware analysis can detect water leakage in construction projects.
+# 💧 Construction Water Anomaly Detection System  
+### Dynamic Regime-Change Detection for Construction Sites
 
 ---
 
 ## 📌 Overview
 
-This project analyzes water consumption patterns across multiple construction sites to detect operational inefficiencies such as leaks, abnormal usage, and cost risks.
+This project implements an online anomaly detection system designed to identify structural changes in water consumption patterns in construction environments.
 
-Using simulated but realistic data, the study models daily consumption by construction phase and applies statistical methods to identify anomalous behavior in one specific tower.
+Instead of relying solely on static statistical regression, the model introduces a dynamic detection architecture inspired by control theory principles:
 
-This project was developed as an initial exploration of water consumption monitoring in construction environments, inspired by a mentor’s product suggestion. The broader goal involves real-time analysis using live data, as outlined in the Potential Extensions section.
+- Bayesian online updating  
+- Signal normalization by structural scale (m³ per floor)  
+- Composite signal (level + discrete derivative)  
+- Rolling window smoothing  
+- Anti-windup behavior (τ-controlled adaptation rate)  
+- Damping factor (γ)  
+- Adjustable operational threshold  
+
+The system detects gradual regime shifts, quantifies excess consumption, and translates statistical behavior into operational decision signals.
+
+The project evolved from exploratory statistical analysis into a modular detection framework.
+
+---
+
+## 🔄 Project Evolution
+
+This work evolved through two distinct technical stages.
+
+### 🧪 v0 — Phase-Based Statistical Regression
+
+The initial version focused on segmented linear regression applied within each construction phase.
+
+**Key characteristics**
+
+- Phase-aware data segmentation  
+- Hypothesis testing (β₁ > 0)  
+- Static trend analysis  
+- Excess consumption benchmarking against peer towers  
+
+**Limitations**
+
+- Detection required full-phase data availability  
+- Limited responsiveness to gradual regime changes  
+- No real-time anomaly scoring mechanism  
+- Purely static statistical framework  
+
+This version validated abnormal behavior but lacked dynamic responsiveness.
+
+---
+
+### ⚙️ v1 — Bayesian Dynamic Regime-Change Detection
+
+The current version introduces a control-inspired dynamic architecture:
+
+- Online Bayesian anomaly score updating  
+- Composite signal (level + discrete derivative)  
+- Rolling window smoothing  
+- Anti-windup adaptation (τ-controlled)  
+- Damping factor (γ)  
+- Adjustable operational threshold  
+
+**Improvements over v0**
+
+- Online detection capability  
+- Reduced sensitivity to short-term noise  
+- Stable convergence behavior  
+- Regime-change modeling (abrupt and logistic shifts)  
+- Quantification of post-detection excess  
+
+This transition reflects a shift from static statistical analysis to dynamic system design.
 
 ---
 
 ## 🎯 Business Problem
 
-Construction projects consume large volumes of water, making inefficiencies difficult to detect without structured monitoring.
+Water leakage in construction projects is difficult to detect because:
 
-Key questions addressed:
+- Consumption varies naturally by phase  
+- Structural scale differs between towers  
+- Leakage often evolves gradually rather than abruptly  
 
-- Which sites consume above expected levels?
-- Are there abnormal consumption trends over time?
-- Can leaks be detected early using data analysis?
-- What is the potential operational impact?
+Operational teams require:
 
----
-
-## 🏗️ Dataset Description
-
-Synthetic dataset representing five construction towers over a 90-day period.
-
-### Features include:
-
-- Tower identification
-- Number of floors (structural scale)
-- Construction phase (Accelerated, Intermediate, Reduction)
-- Daily water consumption (m³)
-- Temporal progression
-- Simulated noise and leak dynamics (leakage in Tower D after day 35)
-
-The dataset is divided into three phases to reflect realistic construction progress and to support early-stage analysis that could inform operational decision-making.
+- Early detection of structural consumption shifts  
+- Quantification of excess usage  
+- Robust behavior without persistent false alarms  
 
 ---
 
-## ⚙️ Methodology
+## 🏗 Dataset Description
 
-### 1. Exploratory Data Analysis (EDA)
+Synthetic but realistic dataset:
 
-- Temporal consumption analysis
-- Comparison between towers
-- Distribution analysis (boxplots, descriptive statistics)
-- Identification of anomalous patterns
+- 5 construction towers  
+- 90 days  
+- Phase-based progression:
+  - Accelerated  
+  - Intermediate  
+  - Reduction  
+- Daily water consumption (m³)  
+- Controlled noise  
 
-![Consumption Trend](figures/boxplot_water_consumption.png)
+**Simulated leakage regimes**
 
-In order to detect the anomalous behavior a linear regression was applied over the whole Tower D consumption data. Interestingly, applying a single regression over the entire period was insufficient to detect the leakage. This led to a more specific approach, that is applying the method in each construction phase.
+- Tower D: earlier structural change  
+- Tower E: smoother logistic regime change  
 
----
+**Normalization applied**
 
-### 2. Phase-Aware Modeling
+\[
+Consumption_{norm} = \frac{m^3}{floors}
+\]
 
-Consumption behavior varies by construction stage.
-
-Phases modeled:
-
-- Accelerated phase
-- Intermediate phase
-- Reduction phase
-
-Segmenting analysis by phase allowed proper baseline comparison.
-
----
-
-### 3. Statistical Trend Analysis
-
-Linear regression applied within each phase to test for positive consumption trends over time.
-
-Hypothesis tested:
-
-- H₀: No growth trend (β₁ = 0)
-- H₁: Positive growth trend (β₁ > 0)
+This ensures structural comparability across towers.
 
 ---
 
-### 4. Anomaly Quantification
+## 📊 Exploratory Analysis
 
-Consumption in Tower D was benchmarked against peer towers normalized by structural scale (number of floors).
+### Cross-Tower Consumption Distribution
 
-This enabled estimation of excess consumption attributable to abnormal behavior. This highlights the importance of contextual modeling when analyzing operational data.
+![Cross-Tower Boxplot](figures/boxplot_water_consumption.png)
+
+The boxplot highlights structural differences in normalized water consumption across towers.
+
+#### 🏢 Tower D
+
+- Positive skewness (right-skewed distribution)  
+- Variance compression relative to peers  
+- Upward shift in central tendency  
+- Behavior inconsistent with expected structural scale  
+
+The compressed interquartile range combined with elevated upper values suggests a sustained regime shift rather than isolated outliers.  
+This pattern is structurally consistent with progressive leakage dynamics.
+
+#### 🏢 Tower E
+
+- Positive skewness (right-skewed distribution)  
+- Presence of upper extreme events  
+- Increased variability in later stages  
+
+Unlike Tower D, Tower E exhibits delayed dispersion expansion, indicating a smoother transition toward abnormal consumption behavior.  
+This aligns with a logistic-type regime change rather than an abrupt structural deviation.
+
+Overall, the observed asymmetry signals non-stationary behavior that cannot be fully explained by construction phase progression alone.  
+This motivates the need for a dynamic anomaly detection framework.
 
 ---
 
-## 📊 Key Findings
+### 📈 Temporal Consumption Behavior Across Towers
 
-![Consumption Trend](figures/tower_d_trend.png)
+![Daily Water Consumption](figures/temporal_consumption_all_towers.png)
 
-- No significant trend during the accelerated phase (normal operation)
-- Statistically significant growth detected in later phases
-- Behavior consistent with progressive leakage dynamics
+The temporal evolution of daily water consumption reveals structural differences across towers throughout the construction phases.
 
-### 🚨 Estimated Impact
+During the **accelerated phase (first ~30 days)**, Tower D exhibits anomalous behavior relative to its structural scale. Although absolute values are lower than other towers, its trajectory shows instability and deviation from the proportional pattern observed in peer structures.
 
-- **Excess consumption:** ~393 m³  
-- **Deviation from expected:** ~22.15%
+Tower E presents a subtler irregularity during the **intermediate phase**, where dispersion begins to widen. This divergence becomes more pronounced in the **reduction phase**, where its trajectory separates from the collective pattern.
 
-This indicates measurable operational inefficiency with financial implications.
+In contrast, Towers A, B, and C maintain consistent proportional trends across phases, reflecting expected consumption dynamics.
+
+These early signals of divergence motivate the need for a regime-change detection framework beyond static phase-based expectations.
+
+---
+
+## 🧩 Detection Architecture
+
+The anomaly detection system is structured into three conceptual layers:
+
+1. Signal Processing Layer  
+2. Probabilistic Inference Layer  
+3. Decision Layer  
+
+This layered design reflects the transition from raw operational data to actionable detection signals.
+
+### 1️⃣ Signal Processing Layer
+
+Raw excess consumption is transformed into a standardized composite signal through:
+
+- Rolling window smoothing (window = 3)  
+- Discrete derivative computation (∇)  
+- Composite signal formation:
+
+\[
+x = \text{level} + \lambda \cdot \text{slope}
+\]
+
+- Standardization by the normal-regime standard deviation  
+
+This stage enhances structural changes while reducing short-term noise.
+
+### 2️⃣ Probabilistic Inference Layer
+
+Two regime models are defined:
+
+**Normal regime**
+
+\[
+\mu = 0, \quad \sigma = 1
+\]
+
+**Leak regime**
+
+\[
+\mu = \delta, \quad \sigma = 1
+\]
+
+For each time step:
+
+- Prior belief propagation using exponential decay (anti-windup mechanism):
+
+\[
+\alpha = e^{-T_s / \tau}
+\]
+
+- Bayesian posterior update via likelihood comparison  
+- Damping factor (γ) moderating abrupt transitions  
+- Posterior clipping for numerical stability  
+
+This dynamic update enables smooth adaptation to regime changes.
+
+### 3️⃣ Decision Layer
+
+Detection occurs when:
+
+\[
+P(\text{leak} \mid x) \geq \text{threshold}
+\]
+
+Once triggered:
+
+- Detection day is recorded  
+- Lag relative to leakage onset is computed  
+- Post-detection excess can be quantified  
+
+This architecture operationalizes statistical modeling into a stable, control-inspired anomaly detection framework.
+
+### 🔧 Implementation Modules
+
+- `rodar_detector_bayes()` — core dynamic detector  
+- `plotar_detector_bayes()` — visualization and monitoring  
+- `calcular_excesso_detectado()` — impact quantification  
+
+---
+
+## 📊 Experimental Results
+
+### 🏢 Tower D
+
+![Tower D Detection](figures/tower_d_detection.png)
+
+- Leakage start: ~day 5  
+- Detection: ~day 16  
+- Effective structural lag: ~3 meaningful days  
+- Stable convergence  
+- No critical overshoot  
+
+### 🏢 Tower E
+
+![Tower E Detection](figures/tower_e_detection.png)
+
+- Leakage start: ~day 40  
+- Detection: ~day 59  
+- Lag ≈ 19 days (smooth logistic regime)  
+- No persistent false positives  
+- Generalization confirmed  
+
+---
+
+## 🚨 Operational Impact
+
+The model:
+
+- Detects gradual structural change  
+- Responds proportionally to regime intensity  
+- Quantifies post-detection excess consumption  
+- Demonstrates robustness across distinct leakage dynamics  
+
+This transitions the project from analysis to a decision-support system.
+
+---
+
+## 🧠 Engineering Perspective
+
+This is not a dashboard.
+
+It is a dynamic regime-change detection system combining:
+
+- Statistical modeling  
+- Control-inspired stability mechanisms  
+- Operational interpretability  
+
+Designed from a Control & Automation Engineering perspective, integrating probabilistic inference with dynamic system stabilization principles.
 
 ---
 
 ## ▶️ How to Run
 
-1. Clone the repository
-2. Open the notebook
-3. Run all cells
+1. Clone the repository  
+2. Open `construction_water_anomaly_model_v1.ipynb`  
+3. Run all cells  
 
 ---
 
-## 🧠 Tools & Technologies
+## 🛠 Tools
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Statsmodels
-- Jupyter Notebook
-
----
-
-## 📈 Potential Extensions
-
-- Integration with real sensor data
-- Automated anomaly detection models
-- Cost estimation dashboards
-- Cloud deployment (Azure / AWS)
-- Real-time monitoring systems
-- Detection of short-term anomalies
+- Python  
+- Pandas  
+- NumPy  
+- Matplotlib  
+- Statsmodels  
+- Jupyter Notebook  
 
 ---
 
-## 📌 Author
+## 📈 Next Steps
 
-Victor Augusto Machado  
-Control & Automation Engineer | Data & Analytics  
-
----
-
-## 📜 License
-
-This project is for educational and portfolio purposes.
+- Validation with real telemetry data  
+- Hyperparameter robustness analysis (τ, γ, threshold)  
+- Real-time pipeline simulation  
+- Cloud-ready deployment architecture  
