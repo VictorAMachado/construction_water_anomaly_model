@@ -1,5 +1,5 @@
 # 💧 Construction Water Anomaly Detection System  
-### Dynamic Regime-Change Detection for Construction Sites
+### Dynamic Bayesian Anomaly Detection for Construction Water Consumption
 
 ---
 
