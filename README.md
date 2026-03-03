@@ -182,9 +182,7 @@ Raw excess consumption is transformed into a standardized composite signal throu
 - Discrete derivative computation (∇)  
 - Composite signal formation:
 
-\[
-x = \text{level} + \lambda \cdot \text{slope}
-\]
+`x = level + λ · slope`
 
 - Standardization by the normal-regime standard deviation  
 
@@ -196,23 +194,17 @@ Two regime models are defined:
 
 **Normal regime**
 
-\[
-\mu = 0, \quad \sigma = 1
-\]
+`μ = 0,  σ = 1`
 
 **Leak regime**
 
-\[
-\mu = \delta, \quad \sigma = 1
-\]
+`μ = δ,  σ = 1`
 
 For each time step:
 
 - Prior belief propagation using exponential decay (anti-windup mechanism):
 
-\[
-\alpha = e^{-T_s / \tau}
-\]
+`α = exp(-Ts / τ)`
 
 - Bayesian posterior update via likelihood comparison  
 - Damping factor (γ) moderating abrupt transitions  
@@ -224,9 +216,7 @@ This dynamic update enables smooth adaptation to regime changes.
 
 Detection occurs when:
 
-\[
-P(\text{leak} \mid x) \geq \text{threshold}
-\]
+`P(leak | x) ≥ threshold`
 
 Once triggered:
 
