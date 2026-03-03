@@ -150,7 +150,7 @@ This motivates the need for a dynamic anomaly detection framework.
 
 ### 📈 Temporal Consumption Behavior Across Towers
 
-![Daily Water Consumption](figures/temporal_consumption_all_towers.png)
+![Daily Water Consumption](figures/towers_consumption_trend.png)
 
 The temporal evolution of daily water consumption reveals structural differences across towers throughout the construction phases.
 
