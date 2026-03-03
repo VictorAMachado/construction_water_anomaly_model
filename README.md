@@ -271,6 +271,91 @@ This transitions the project from analysis to a decision-support system.
 
 ---
 
+## 📌 Conclusion & Quantified Impact
+
+### 🔍 Objective
+
+Develop a probabilistic online model capable of detecting structural regime changes in construction water consumption using sequential Bayesian inference.
+
+---
+
+### 📊 Limitations of Traditional Approaches
+
+Exploratory analysis showed that:
+
+- Global linear regression fails to capture temporal dependency.
+- Phase-based regression identifies average trends but lacks early detection capability.
+- Static variability metrics (e.g., standard deviation) are insufficient to infer regime shifts.
+
+These limitations motivated the adoption of a dynamic probabilistic framework.
+
+---
+
+### 🧠 Proposed Approach
+
+A Bayesian Online Detector was implemented, incorporating:
+
+- Structural normalization (m³ per floor)
+- Composite signal (level + discrete derivative)
+- Sequential posterior updating
+- Control-inspired damping dynamics
+- Adjustable operational risk threshold
+
+The model continuously updates:
+
+`P(anomalous_regime | X₁:t)`
+
+allowing real-time evidence accumulation.
+
+---
+
+### 🏗 Quantified Results
+
+#### 🏢 Tower D
+
+- Accumulated excess after detection: **25.04 m³**
+- Percentage above expected baseline: **4.29%**
+- Early detection of progressive structural deviation
+- Stable convergence without critical overshoot
+
+#### 🏢 Tower E
+
+- Accumulated excess after detection: **18.06 m³**
+- Percentage above expected baseline: **3.09%**
+- Longer detection lag consistent with smoother regime transition
+- No persistent false positives
+- Probabilistic stability maintained
+
+---
+
+### 💼 Operational Implications
+
+The methodology enables:
+
+- Detection of gradual regime changes in operational time series
+- Online evidence updating
+- Quantification of accumulated impact after alert
+- Translation of statistical signals into actionable decisions
+
+More than identifying leaks, the system detects structural behavioral shifts in monitored processes.
+
+---
+
+### 🚀 Final Remarks
+
+This project demonstrates that sequential Bayesian inference, combined with control-inspired stabilization mechanisms, is effective for early detection of progressive anomalies in operational environments.
+
+The framework is extensible to:
+
+- Utility monitoring  
+- Industrial systems  
+- IoT sensor networks  
+- Gradual regime-change processes  
+
+The project concludes with emphasis on statistical robustness, operational applicability, and technical interpretability.
+
+---
+
 ## 🧠 Engineering Perspective
 
 This is not a dashboard.
